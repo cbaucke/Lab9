@@ -55,6 +55,14 @@
     <button>Trigger a Global Error</button>
   </section>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "8adf3e3dfa6b47628cfe0694e6da4213"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
   <script>
     let calculateBtn = document.querySelector('#calculate');
     calculateBtn.addEventListener('click', () => {
@@ -67,6 +75,95 @@
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
     // TODO - Make buttons functional
+    //Console log demo button
+    errorBtns[0].addEventListener("click", () => {
+      console.log("This is a log message");
+    });
+    //Console error demo button
+    errorBtns[1].addEventListener("click", () => {
+      console.error("Error!");
+    });
+    //Console dir button
+    errorBtns[2].addEventListener("click", () => {
+      console.dir(new Date());
+    });
+    //Console dirxml button
+    errorBtns[3].addEventListener("click", () => {
+      console.dirxml(new Date());
+    });
+    //Console group start button
+    errorBtns[4].addEventListener("click", () => {
+      console.group("Test Group");
+    });
+    //Console group end button
+    errorBtns[5].addEventListener("click", () => {
+      console.groupEnd("Test Group");
+    });
+    //Console table button
+    errorBtns[6].addEventListener("click", () => {
+      console.table([
+        {
+          content: "Test"
+        },
+        {
+          content: "Another object"
+        },
+        {
+          content: "Testing"
+        }
+      ]);
+    });
+    //Console start timer button
+    errorBtns[7].addEventListener("click", () => {
+      console.time();
+    });
+    //Console end timer button
+    errorBtns[8].addEventListener("click", () => {
+      console.timeEnd();
+    });
+    //Console trace button
+    errorBtns[9].addEventListener("click", () => {
+      console.trace();
+    });
+    //Trigger error button
+    errorBtns[10].addEventListener("click", () => {
+      //Uncaught error for window.onerror
+      const TEMP = "Test constant";
+      TEMP = "New constant";
+    });
+
+    //Custom error type
+    class BulletPropertyError extends Error{
+      constructor(message){
+        super(message);
+        this.name = "BulletPropertyError";
+      }
+    }
+
+    //try-catch-finally with custom error
+    let bullet;
+    try{
+      bullet = {
+        content: "This is a bullet",
+        date: "",
+        processed: false
+      };
+      if(typeof bullet.date != typeof new Date()){
+        throw new BulletPropertyError("Invalid type for date property");
+      }
+    } catch(error){
+      console.error("Caught error: " + error);
+      TrackJS.track(error);
+    } finally{
+      bullet.processed = true;
+    }
+
+    //onerror function to send uncaught errors to TrackJS
+    window.onerror = function(errMsg, url, lineNum){
+      console.error("Uncaught error: " + errMsg);
+      TrackJS.track(errMsg);
+    }
+
   </script>
 </body>
 </html>
